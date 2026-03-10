@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import SetupShop from './pages/SetupShop';
 import LicenseGuard from './components/LicenseGuard';
+import NetworkStatus from './components/NetworkStatus';
 import { supabase } from './supabase';
 import { Lock, Store } from 'lucide-react';
 
@@ -100,6 +101,7 @@ export default function App() {
   if (!isAuthenticated) {
     return (
       <BrowserRouter>
+        <NetworkStatus />
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Login />} />
@@ -113,6 +115,7 @@ export default function App() {
   return (
     <LicenseGuard>
       <BrowserRouter>
+        <NetworkStatus />
         <div className="flex h-screen bg-slate-50 overflow-hidden">
           {/* Blocked User Overlay */}
           {user && !user.isActive && (
