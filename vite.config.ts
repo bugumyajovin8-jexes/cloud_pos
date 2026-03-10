@@ -16,22 +16,25 @@ export default defineConfig(({mode}) => {
           enabled: true
         },
         manifest: {
-          name: 'Cloud POS Desktop',
-          short_name: 'CloudPOS',
-          description: 'Professional Online POS System',
-          theme_color: '#0f172a',
+          name: 'POS Yangu',
+          short_name: 'POSYangu',
+          description: 'Mfumo wa Mauzo wa Kisasa',
+          theme_color: '#2563eb',
           background_color: '#f8fafc',
           display: 'standalone',
+          orientation: 'portrait',
           icons: [
             {
-              src: 'https://picsum.photos/seed/pos/192/192',
+              src: 'https://placehold.co/192x192/22c55e/ef4444/png?text=POS',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             },
             {
-              src: 'https://picsum.photos/seed/pos/512/512',
+              src: 'https://placehold.co/512x512/22c55e/ef4444/png?text=POS',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             }
           ]
         }
