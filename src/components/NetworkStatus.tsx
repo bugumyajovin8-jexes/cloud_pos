@@ -11,7 +11,11 @@ export default function NetworkStatus() {
       setIsOnline(true);
       setShowBackOnline(true);
       // Hide the "Back Online" message after 3 seconds
-      setTimeout(() => setShowBackOnline(false), 3000);
+      setTimeout(() => {
+        setShowBackOnline(false);
+        // Auto-refresh the page to get the latest data
+        window.location.reload();
+      }, 3000);
     };
 
     const handleOffline = () => {
@@ -62,7 +66,7 @@ export default function NetworkStatus() {
             </div>
             <div>
               <p className="font-bold text-sm md:text-base">Internet Imerudi!</p>
-              <p className="text-xs opacity-90">Sasa unaweza kuendelea kutumia mfumo.</p>
+              <p className="text-xs opacity-90">Mfumo unajisajili upya sasa...</p>
             </div>
             <button onClick={() => setShowBackOnline(false)} className="ml-2 p-1 hover:bg-white/10 rounded-lg transition-colors">
               <X className="w-4 h-4" />
