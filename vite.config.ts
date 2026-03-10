@@ -19,19 +19,19 @@ export default defineConfig(({mode}) => {
           name: 'POS Yangu',
           short_name: 'POSYangu',
           description: 'Mfumo wa Mauzo wa Kisasa',
-          theme_color: '#10b981',
-          background_color: '#f8fafc',
+          theme_color: '#000000',
+          background_color: '#000000',
           display: 'standalone',
           orientation: 'portrait',
           icons: [
             {
-              src: 'https://placehold.co/192x192/10b981/ffffff/png?text=POS',
+              src: 'https://placehold.co/192x192/000000/FFD700/png?text=$',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any maskable'
             },
             {
-              src: 'https://placehold.co/512x512/10b981/ffffff/png?text=POS',
+              src: 'https://placehold.co/512x512/000000/FFD700/png?text=$',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
