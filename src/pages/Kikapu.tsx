@@ -47,9 +47,9 @@ export default function Kikapu() {
     c.toLowerCase().includes(customerName.toLowerCase())
   );
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) && p.stock > 0 && !p.isDeleted
-  );
+  const filteredProducts = products
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()) && p.stock > 0 && !p.isDeleted)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleSelectCustomer = (name: string) => {
     setCustomerName(name);
@@ -177,18 +177,21 @@ export default function Kikapu() {
       </div>
 
       {/* Mobile Floating Cart Button */}
-      {cart.length > 0 && (
+      {cart.length > 0 && !showCartMobile && (
         <button 
-          onClick={() => setShowCartMobile(true)}
-          className="md:hidden fixed bottom-20 right-4 bg-blue-600 text-white p-4 rounded-full shadow-2xl z-40 flex items-center space-x-2"
+          onClick={() => {
+            setShowCartMobile(true);
+            setIsCheckout(true);
+          }}
+          className="md:hidden fixed bottom-20 right-4 bg-emerald-600 text-white p-4 rounded-full shadow-2xl z-40 flex items-center space-x-2 animate-in fade-in zoom-in duration-300"
         >
           <div className="relative">
-            <ShoppingBag className="w-6 h-6" />
-            <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-blue-600">
+            <CreditCard className="w-6 h-6" />
+            <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-emerald-600">
               {cart.reduce((sum, item) => sum + item.qty, 0)}
             </span>
           </div>
-          <span className="font-bold text-sm">Tazama Kikapu</span>
+          <span className="font-bold text-sm">Endelea na Malipo</span>
         </button>
       )}
 
