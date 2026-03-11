@@ -25,9 +25,9 @@ export default function Bidhaa() {
 
   const currency = shopSettings?.currency || 'TZS';
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
