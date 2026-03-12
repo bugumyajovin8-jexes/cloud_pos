@@ -11,6 +11,7 @@ export default function Historia() {
   const [shopSettings, setShopSettings] = useState<any>(null);
   const { data: sales, loading: salesLoading } = useSupabaseData<any>('sales');
   const { data: saleItems, loading: itemsLoading } = useSupabaseData<any>('sale_items');
+  const { data: expenses, loading: expensesLoading } = useSupabaseData<any>('expenses');
   
   const [view, setView] = useState<'risiti' | 'ripoti'>('risiti');
   const [filter, setFilter] = useState('leo');
@@ -41,8 +42,15 @@ export default function Historia() {
     .filter(s => new Date(s.created_at).getTime() >= startDate)
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
+  const filteredExpenses = expenses
+    .filter(e => new Date(e.created_at).getTime() >= startDate);
+
   const totalRevenue = filteredSales.reduce((sum, s) => sum + s.total_amount, 0);
   const totalProfit = filteredSales.reduce((sum, s) => sum + (s.total_profit || 0), 0);
+  const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const netProfit = totalProfit - totalExpenses;
+
+  const showNetProfit = ['mwezi', 'miezi6', 'mwaka'].includes(filter);
 
   const exportCSV = () => {
     const headers = ['Tarehe', 'Kiasi', 'Faida', 'Aina', 'Mteja'];
@@ -68,7 +76,7 @@ export default function Historia() {
   };
 
   const reportData = useMemo(() => {
-    const groups: Record<string, { mapato: number, faida: number, mauzo: number }> = {};
+    const groups: Record<string, { mapato: number, faida: number, mauzo: number, matumizi: number }> = {};
     
     sales.forEach(sale => {
       const date = new Date(sale.created_at);
@@ -77,20 +85,34 @@ export default function Historia() {
         : format(date, 'yyyy');
         
       if (!groups[dateStr]) {
-        groups[dateStr] = { mapato: 0, faida: 0, mauzo: 0 };
+        groups[dateStr] = { mapato: 0, faida: 0, mauzo: 0, matumizi: 0 };
       }
       groups[dateStr].mapato += sale.total_amount;
       groups[dateStr].faida += (sale.total_profit || 0);
       groups[dateStr].mauzo += 1;
     });
 
+    expenses.forEach(expense => {
+      const date = new Date(expense.created_at);
+      const dateStr = reportType === 'mwezi' 
+        ? format(date, 'MMM yyyy') 
+        : format(date, 'yyyy');
+        
+      if (groups[dateStr]) {
+        groups[dateStr].matumizi += expense.amount;
+      } else {
+        groups[dateStr] = { mapato: 0, faida: 0, mauzo: 0, matumizi: expense.amount };
+      }
+    });
+
     return Object.entries(groups).map(([label, data]) => ({
       label,
-      ...data
+      ...data,
+      faidaHalisi: data.faida - data.matumizi
     })).sort((a, b) => b.label.localeCompare(a.label));
-  }, [sales, reportType]);
+  }, [sales, expenses, reportType]);
 
-  if (salesLoading || itemsLoading) {
+  if (salesLoading || itemsLoading || expensesLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
@@ -145,7 +167,7 @@ export default function Historia() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             <div className="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Mapato</p>
               <p className="text-lg md:text-2xl font-bold text-slate-900">{formatCurrency(totalRevenue, currency)}</p>
@@ -154,6 +176,14 @@ export default function Historia() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Faida</p>
               <p className="text-lg md:text-2xl font-bold text-emerald-600">{formatCurrency(totalProfit, currency)}</p>
             </div>
+            {showNetProfit && (
+              <div className="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Faida Halisi</p>
+                <p className={`text-lg md:text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+                  {formatCurrency(netProfit, currency)}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
@@ -273,11 +303,21 @@ export default function Historia() {
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Mapato ya Jumla</p>
                     <p className="text-xl md:text-2xl font-bold text-slate-900">{formatCurrency(report.mapato, currency)}</p>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Faida ya Jumla</p>
-                    <p className="text-xl md:text-2xl font-bold text-emerald-600 flex items-center">
-                      <TrendingUp className="w-5 h-5 mr-2" />
-                      {formatCurrency(report.faida, currency)}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Faida ya Mauzo</p>
+                      <p className="text-sm md:text-base font-bold text-emerald-600">{formatCurrency(report.faida, currency)}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Matumizi</p>
+                      <p className="text-sm md:text-base font-bold text-rose-600">{formatCurrency(report.matumizi, currency)}</p>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Faida Halisi (Net Profit)</p>
+                    <p className={`text-xl md:text-2xl font-bold flex items-center ${report.faidaHalisi >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+                      {report.faidaHalisi >= 0 ? <TrendingUp className="w-5 h-5 mr-2" /> : <TrendingUp className="w-5 h-5 mr-2 rotate-180" />}
+                      {formatCurrency(report.faidaHalisi, currency)}
                     </p>
                   </div>
                 </div>
