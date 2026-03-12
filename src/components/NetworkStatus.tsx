@@ -13,8 +13,6 @@ export default function NetworkStatus() {
       // Hide the "Back Online" message after 3 seconds
       setTimeout(() => {
         setShowBackOnline(false);
-        // Auto-refresh the page to get the latest data
-        window.location.reload();
       }, 3000);
     };
 
