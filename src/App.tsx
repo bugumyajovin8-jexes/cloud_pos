@@ -8,6 +8,7 @@ import Bidhaa from './pages/Bidhaa';
 import Kikapu from './pages/Kikapu';
 import Madeni from './pages/Madeni';
 import Historia from './pages/Historia';
+import Matumizi from './pages/Matumizi';
 import Zaidi from './pages/Zaidi';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -169,6 +170,7 @@ export default function App() {
                     <Route path="/kikapu" element={<Kikapu />} />
                     <Route path="/madeni" element={<Madeni />} />
                     <Route path="/historia" element={<Historia />} />
+                    <Route path="/matumizi" element={<Matumizi />} />
                     <Route path="/zaidi" element={<Zaidi />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </>
