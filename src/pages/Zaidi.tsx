@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '../store';
-import { LogOut, Phone, ShieldCheck, CreditCard, User, Store, Globe, HelpCircle, ChevronRight } from 'lucide-react';
+import { LogOut, Phone, ShieldCheck, CreditCard, User, Store, Globe, HelpCircle, ChevronRight, Receipt } from 'lucide-react';
 import { supabase } from '../supabase';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,11 +22,12 @@ export default function Zaidi() {
   };
 
   const menuItems = [
-    { icon: User, label: 'Wasifu wa Mtumiaji', desc: 'Badili jina au namba ya simu' },
-    { icon: Store, label: 'Taarifa za Duka', desc: 'Jina la duka, anuani na sarafu' },
-    { icon: CreditCard, label: 'Malipo & Leseni', desc: 'Angalia hali ya usajili wako' },
-    { icon: Globe, label: 'Lugha', desc: 'Badili lugha ya mfumo' },
-    { icon: HelpCircle, label: 'Msaada', desc: 'Maswali yanayoulizwa mara kwa mara' },
+    { icon: User, label: 'Wasifu wa Mtumiaji', desc: 'Badili jina au namba ya simu', path: '#' },
+    { icon: Store, label: 'Taarifa za Duka', desc: 'Jina la duka, anuani na sarafu', path: '#' },
+    { icon: CreditCard, label: 'Malipo & Leseni', desc: 'Angalia hali ya usajili wako', path: '#' },
+    { icon: Receipt, label: 'Matumizi ya Biashara', desc: 'Fuatilia gharama za uendeshaji', path: '/matumizi' },
+    { icon: Globe, label: 'Lugha', desc: 'Badili lugha ya mfumo', path: '#' },
+    { icon: HelpCircle, label: 'Msaada', desc: 'Maswali yanayoulizwa mara kwa mara', path: '#' },
   ];
 
   return (
@@ -92,6 +93,7 @@ export default function Zaidi() {
             {menuItems.map((item, idx) => (
               <button 
                 key={idx}
+                onClick={() => item.path !== '#' && navigate(item.path)}
                 className="w-full flex items-center p-4 md:p-6 hover:bg-slate-50 transition-colors group text-left"
               >
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-slate-100 rounded-lg md:rounded-xl flex items-center justify-center mr-4 md:mr-6 group-hover:bg-blue-50 transition-colors">
