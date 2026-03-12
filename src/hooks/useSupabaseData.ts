@@ -15,8 +15,8 @@ export function useSupabaseData<T>(table: string, query?: any) {
   useEffect(() => {
     if (!user?.shop_id) return;
 
-    async function fetchData() {
-      setLoading(true);
+    async function fetchData(isBackground = false) {
+      if (!isBackground) setLoading(true);
       try {
         let baseQuery = supabase
           .from(table)
@@ -34,12 +34,12 @@ export function useSupabaseData<T>(table: string, query?: any) {
       } catch (err) {
         setError(err);
       } finally {
-        setLoading(false);
+        if (!isBackground) setLoading(false);
       }
     }
 
     fetchData();
-    const pollInterval = setInterval(fetchData, 30000);
+    const pollInterval = setInterval(() => fetchData(true), 30000);
 
     // Set up real-time subscription
     const channel = supabase
