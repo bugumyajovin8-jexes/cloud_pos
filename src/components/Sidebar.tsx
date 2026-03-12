@@ -7,7 +7,8 @@ import {
   History, 
   Settings, 
   LogOut,
-  Store
+  Store,
+  Receipt
 } from 'lucide-react';
 import { useStore } from '../store';
 
@@ -19,6 +20,7 @@ export default function Sidebar() {
     { to: '/', icon: LayoutDashboard, label: 'Dashibodi' },
     { to: '/bidhaa', icon: Package, label: 'Bidhaa' },
     { to: '/kikapu', icon: ShoppingCart, label: 'Kikapu' },
+    { to: '/matumizi', icon: Receipt, label: 'Matumizi' },
     { to: '/madeni', icon: Users, label: 'Madeni' },
     { to: '/historia', icon: History, label: 'Historia' },
     { to: '/zaidi', icon: Settings, label: 'Mipangilio' },
