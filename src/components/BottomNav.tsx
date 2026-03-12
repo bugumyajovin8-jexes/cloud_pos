@@ -5,7 +5,8 @@ import {
   ShoppingCart, 
   Users, 
   History, 
-  Settings 
+  Settings,
+  Receipt
 } from 'lucide-react';
 
 export default function BottomNav() {
@@ -13,6 +14,7 @@ export default function BottomNav() {
     { to: '/', icon: LayoutDashboard, label: 'Dashi' },
     { to: '/bidhaa', icon: Package, label: 'Bidhaa' },
     { to: '/kikapu', icon: ShoppingCart, label: 'Kikapu' },
+    { to: '/matumizi', icon: Receipt, label: 'Matumizi' },
     { to: '/madeni', icon: Users, label: 'Madeni' },
     { to: '/historia', icon: History, label: 'Historia' },
     { to: '/zaidi', icon: Settings, label: 'Zaidi' },
