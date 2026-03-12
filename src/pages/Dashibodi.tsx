@@ -14,6 +14,7 @@ export default function Dashibodi() {
 
   const { data: sales, loading: salesLoading } = useSupabaseData<any>('sales');
   const { data: products, loading: productsLoading } = useSupabaseData<any>('products');
+  const { data: expenses, loading: expensesLoading } = useSupabaseData<any>('expenses');
   const [shopSettings, setShopSettings] = useState<any>(null);
   const [license, setLicense] = useState<any>(null);
 
@@ -38,7 +39,9 @@ export default function Dashibodi() {
   const lastMonthStart = startOfMonth(subMonths(now, 1)).getTime();
 
   const todaySales = sales.filter(s => new Date(s.created_at).getTime() >= todayStart);
+  const todayExpenses = expenses.filter(e => new Date(e.created_at).getTime() >= todayStart);
   const monthSales = sales.filter(s => new Date(s.created_at).getTime() >= monthStart);
+  const monthExpenses = expenses.filter(e => new Date(e.created_at).getTime() >= monthStart);
   const lastMonthSales = sales.filter(s => {
     const saleTime = new Date(s.created_at).getTime();
     return saleTime >= lastMonthStart && saleTime < monthStart;
@@ -46,6 +49,12 @@ export default function Dashibodi() {
 
   const calcTotal = (arr: any[]) => arr.reduce((sum, s) => sum + s.total_amount, 0);
   const calcProfit = (arr: any[]) => arr.reduce((sum, s) => sum + (s.total_profit || 0), 0);
+  const calcExpenses = (arr: any[]) => arr.reduce((sum, e) => sum + e.amount, 0);
+
+  const todayGrossProfit = calcProfit(todaySales);
+  const todayExpenseTotal = calcExpenses(todayExpenses);
+  const monthExpenseTotal = calcExpenses(monthExpenses);
+  const todayNetProfit = todayGrossProfit - todayExpenseTotal;
 
   const currentMonthTotal = calcTotal(monthSales);
   const lastMonthTotal = calcTotal(lastMonthSales);
@@ -75,7 +84,7 @@ export default function Dashibodi() {
 
   const totalDebt = sales.filter(s => s.payment_method === 'credit' && s.status !== 'completed').reduce((sum, s) => sum + s.total_amount, 0);
 
-  if (salesLoading || productsLoading) {
+  if (salesLoading || productsLoading || expensesLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
@@ -132,12 +141,22 @@ export default function Dashibodi() {
             <TrendingUp className="w-6 h-6 text-emerald-600" />
           </div>
           <p className="text-sm font-medium text-slate-500">Faida (Leo)</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(calcProfit(todaySales), currency)}</p>
+          <p className="text-2xl font-bold text-slate-900 mt-1">
+            {formatCurrency(todayGrossProfit, currency)}
+          </p>
         </div>
 
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-4">
-            <CreditCard className="w-6 h-6 text-rose-600" />
+            <TrendingDown className="w-6 h-6 text-rose-600" />
+          </div>
+          <p className="text-sm font-medium text-slate-500">Matumizi (Mwezi)</p>
+          <p className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(monthExpenseTotal, currency)}</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
+            <CreditCard className="w-6 h-6 text-amber-600" />
           </div>
           <p className="text-sm font-medium text-slate-500">Jumla ya Madeni</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(totalDebt, currency)}</p>
