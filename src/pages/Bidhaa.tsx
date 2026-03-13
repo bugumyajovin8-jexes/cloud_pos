@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatCurrency } from '../utils/format';
+import { formatCurrency, formatNumberWithCommas, parseFormattedNumber } from '../utils/format';
 import { Plus, Search, Edit, Trash2, AlertCircle, RefreshCw, Package, ArrowLeft } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from '../store';
@@ -16,6 +16,26 @@ export default function Bidhaa() {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [stockModalProduct, setStockModalProduct] = useState<any | null>(null);
   const [stockToAdd, setStockToAdd] = useState('');
+
+  // Form states for formatting
+  const [formBuyPrice, setFormBuyPrice] = useState('');
+  const [formSellPrice, setFormSellPrice] = useState('');
+  const [formStock, setFormStock] = useState('');
+  const [formMinStock, setFormMinStock] = useState('');
+
+  useEffect(() => {
+    if (editingProduct) {
+      setFormBuyPrice(formatNumberWithCommas(editingProduct.buy_price));
+      setFormSellPrice(formatNumberWithCommas(editingProduct.sell_price));
+      setFormStock(formatNumberWithCommas(editingProduct.stock));
+      setFormMinStock(formatNumberWithCommas(editingProduct.min_stock || 5));
+    } else {
+      setFormBuyPrice('');
+      setFormSellPrice('');
+      setFormStock('');
+      setFormMinStock('5');
+    }
+  }, [editingProduct, isAdding]);
 
   useEffect(() => {
     if (user?.shop_id) {
@@ -38,10 +58,10 @@ export default function Bidhaa() {
       id,
       shop_id: user?.shop_id || '',
       name: formData.get('name') as string,
-      buy_price: Number(formData.get('buyPrice')),
-      sell_price: Number(formData.get('sellPrice')),
-      stock: Number(formData.get('stock')),
-      min_stock: Number(formData.get('lowStockThreshold')),
+      buy_price: parseFormattedNumber(formBuyPrice),
+      sell_price: parseFormattedNumber(formSellPrice),
+      stock: parseFormattedNumber(formStock),
+      min_stock: parseFormattedNumber(formMinStock),
       unit: 'pcs',
       updated_at: new Date().toISOString(),
     };
@@ -72,7 +92,7 @@ export default function Bidhaa() {
     e.preventDefault();
     if (!stockModalProduct) return;
     
-    const amount = parseInt(stockToAdd, 10);
+    const amount = parseFormattedNumber(stockToAdd);
     if (isNaN(amount) || amount <= 0) {
       alert('Tafadhali weka namba sahihi.');
       return;
@@ -128,22 +148,46 @@ export default function Bidhaa() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Bei ya Kununua</label>
-                <input required type="number" name="buyPrice" defaultValue={p?.buy_price} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formBuyPrice}
+                  onChange={e => setFormBuyPrice(formatNumberWithCommas(e.target.value))}
+                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Bei ya Kuuza</label>
-                <input required type="number" name="sellPrice" defaultValue={p?.sell_price} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formSellPrice}
+                  onChange={e => setFormSellPrice(formatNumberWithCommas(e.target.value))}
+                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Idadi ya Stock</label>
-                <input required type="number" name="stock" defaultValue={p?.stock} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formStock}
+                  onChange={e => setFormStock(formatNumberWithCommas(e.target.value))}
+                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Tahadhari ya Stock (Min)</label>
-                <input required type="number" name="lowStockThreshold" defaultValue={p?.min_stock || 5} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formMinStock}
+                  onChange={e => setFormMinStock(formatNumberWithCommas(e.target.value))}
+                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                />
               </div>
             </div>
 
@@ -308,10 +352,10 @@ export default function Bidhaa() {
                 <input 
                   autoFocus
                   required
-                  type="number"
+                  type="text"
                   placeholder="Mfano: 10"
                   value={stockToAdd}
-                  onChange={e => setStockToAdd(e.target.value)}
+                  onChange={e => setStockToAdd(formatNumberWithCommas(e.target.value))}
                   className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-xl font-bold"
                 />
               </div>
