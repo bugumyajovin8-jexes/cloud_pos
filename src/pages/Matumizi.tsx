@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatCurrency } from '../utils/format';
+import { formatCurrency, formatNumberWithCommas, parseFormattedNumber } from '../utils/format';
 import { Plus, Search, Trash2, RefreshCw, Receipt, ArrowLeft, Calendar, Tag, DollarSign } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from '../store';
@@ -14,6 +14,13 @@ export default function Matumizi() {
   
   const [search, setSearch] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+  const [formAmount, setFormAmount] = useState('');
+
+  useEffect(() => {
+    if (!isAdding) {
+      setFormAmount('');
+    }
+  }, [isAdding]);
 
   useEffect(() => {
     if (user?.shop_id) {
@@ -35,7 +42,7 @@ export default function Matumizi() {
       id: uuidv4(),
       shop_id: user?.shop_id || '',
       description: (formData.get('description') as string) || (formData.get('category') as string),
-      amount: Number(formData.get('amount')),
+      amount: parseFormattedNumber(formAmount),
       category: formData.get('category') as string,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -111,7 +118,14 @@ export default function Matumizi() {
               <label className="block text-sm font-semibold text-slate-700 mb-2">Kiasi (Amount)</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input required type="number" name="amount" className="w-full pl-10 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="0" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formAmount}
+                  onChange={e => setFormAmount(formatNumberWithCommas(e.target.value))}
+                  className="w-full pl-10 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                  placeholder="0" 
+                />
               </div>
             </div>
 
