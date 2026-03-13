@@ -98,9 +98,22 @@ export default function Dashibodi() {
       <header className="hidden md:flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">{shopSettings?.name || 'Dashibodi'}</h1>
-          <p className="text-slate-500 mt-1">Karibu tena, {user?.name}</p>
+          <div className="flex items-center space-x-2 mt-1">
+            <p className="text-slate-500">Karibu tena, {user?.name}</p>
+            <span className="text-slate-300">•</span>
+            <p className="text-slate-500 font-medium">{new Date().toLocaleDateString('sw-TZ', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
+          {lowStockProducts.length > 0 && (
+            <div 
+              onClick={() => navigate('/bidhaa')}
+              className="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer hover:bg-rose-200 transition-colors"
+            >
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Bidhaa {lowStockProducts.length} zinaisha stock
+            </div>
+          )}
           {license && (
             <div className={`flex items-center px-4 py-2 rounded-xl text-sm font-semibold ${daysRemaining > 5 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
               {daysRemaining > 5 ? <ShieldCheck className="w-4 h-4 mr-2" /> : <AlertTriangle className="w-4 h-4 mr-2" />}
@@ -117,14 +130,26 @@ export default function Dashibodi() {
       </header>
 
       {/* Mobile License Status */}
-      {license && (
-        <div className="md:hidden">
+      <div className="md:hidden space-y-3">
+        <div className="flex justify-between items-center">
+          <p className="text-slate-500 text-sm font-medium">{new Date().toLocaleDateString('sw-TZ', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          {lowStockProducts.length > 0 && (
+            <div 
+              onClick={() => navigate('/bidhaa')}
+              className="flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-700 border border-rose-200"
+            >
+              <AlertTriangle className="w-3 h-3 mr-1.5" />
+              Stock Chini ({lowStockProducts.length})
+            </div>
+          )}
+        </div>
+        {license && (
           <div className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold ${daysRemaining > 5 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
             {daysRemaining > 5 ? <ShieldCheck className="w-4 h-4 mr-2" /> : <AlertTriangle className="w-4 h-4 mr-2" />}
             Siku {daysRemaining} zimebaki
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
