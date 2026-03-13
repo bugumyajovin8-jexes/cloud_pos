@@ -9,7 +9,9 @@ export default function Register() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,12 @@ export default function Register() {
     setError('');
     setSuccess('');
     setLoading(true);
+
+    if (password !== confirmPassword) {
+      setError('Nenosiri hazilingani. Tafadhali hakikisha nenosiri zote mbili ni sawa.');
+      setLoading(false);
+      return;
+    }
 
     try {
       // 1. Sign up with Supabase Auth
@@ -125,12 +133,30 @@ export default function Register() {
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input 
+              type={showConfirmPassword ? "text" : "password"} 
+              value={confirmPassword}
+              onChange={e => { setConfirmPassword(e.target.value); setError(''); }}
+              className="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Thibitisha Nenosiri"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           {success && <p className="text-green-600 text-sm mt-2 bg-green-50 p-3 rounded-xl border border-green-200">{success}</p>}
           
           <button 
             type="submit" 
-            disabled={!email || !password || loading}
+            disabled={!email || !password || !confirmPassword || loading}
             className="w-full bg-blue-600 disabled:bg-gray-300 text-white font-bold py-4 rounded-2xl shadow-md transition-colors mt-4"
           >
             {loading ? 'Inasajili...' : 'Sajili Akaunti'}
