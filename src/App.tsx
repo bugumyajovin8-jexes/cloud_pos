@@ -140,7 +140,7 @@ export default function App() {
 
           {!needsShopSetup && <Sidebar />}
 
-          <main className="flex-1 overflow-y-auto bg-slate-50 pb-20 md:pb-0">
+          <main className={`flex-1 bg-slate-50 pb-20 md:pb-0 ${window.location.pathname === '/kikapu' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             {!needsShopSetup && (
               <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -156,7 +156,7 @@ export default function App() {
                 </div>
               </header>
             )}
-            <div className="max-w-7xl mx-auto">
+            <div className={`${window.location.pathname === '/kikapu' ? 'max-w-none' : 'max-w-7xl'} mx-auto h-full`}>
               <Routes>
                 {needsShopSetup ? (
                   <>
